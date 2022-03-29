@@ -13,7 +13,7 @@ const oracledb = require('oracledb');
 let response; // variable I put in to test passing to client
 
 // oracledb connection code taken from Oracle
-//
+// https://www.oracle.com/database/technologies/appdev/quickstartnodeonprem.html
 async function run() {
 
   let connection;
