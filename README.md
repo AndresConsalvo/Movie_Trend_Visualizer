@@ -6,11 +6,11 @@
 * Om Goyal
 * Meryem Yuksel
 
-### Code Resources:
+### Coding Resources:
 
-** Database Connection **
+**Database Connection**
 https://www.freecodecamp.org/news/how-to-create-a-react-app-with-a-node-backend-the-complete-guide/
 https://www.oracle.com/database/technologies/appdev/quickstartnodeonprem.html
 
-** UI **
+**UI**
 https://www.techomoro.com/how-to-create-a-multi-page-website-with-react-in-5-minutes/
