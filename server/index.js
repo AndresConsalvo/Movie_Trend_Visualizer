@@ -61,7 +61,7 @@ async function run() {
     // Now query the rows back
 
     const result = await connection.execute(
-      `select title from movies`,
+      `select title from laurachang.movies`,
       [],
       { maxRows: 1 });
     console.log(result.rows);
