@@ -45,7 +45,7 @@ function LineChart(props) {
         const yScale = d3
             .scaleLinear()
             .range([height, 0])
-            .domain([0, yMaxValue]);
+            .domain([yMinValue, yMaxValue]);
         const line = d3
             .line()
             .x(d => xScale(d.label))

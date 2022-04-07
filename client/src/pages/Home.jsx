@@ -1,27 +1,35 @@
 import React from "react";
+import Axios from "axios";
 import LineChart from "../LineChart";
 import logo from "../logo.svg";
 import "../App.css";
 
 function App() {
-  const [data, setData] = React.useState([null]);
-  const [data2, setData2] = React.useState(null);
-  const [data3, setData3] = React.useState(null);
+  const [data1, setData] = React.useState([]);
+  const [data2, setData2] = React.useState([]);
+  const [data3, setData3] = React.useState([]);
 
   React.useEffect(() => {
-    fetch("/api")
-      .then((data) => setData(data.response));
+    Axios.get('http://localhost:3001/api').then((response) => {
+      console.log(response.data)
+      setData(response.data);
+    });
   }, []);
 
   React.useEffect(() => {
-    fetch("/profitpercentage/yearly")
-      .then((data2) => setData2(data2.response2));
+    Axios.get('http://localhost:3001/profitpercentage/yearly').then((response) => {
+      console.log(response.data)
+      setData2(response.data);
+    });
+
+    generateData();
   }, []);
 
-  React.useEffect(() => {
-    console.log(data);
-    console.log(data2);
-  }, []);
+
+  // React.useEffect(() => {
+  //   console.log(data1.at(0).TITLE);
+  //   console.log(data2);
+  // }, []);
 
   // React.useEffect(() => {
   //   generateData();
@@ -31,13 +39,13 @@ function App() {
   function generateData() {
     const chartData = [];
     for (let i = 0; i < data2.length; i++) {
-      let year = data2[i][1];
-      let profit_percentage = data2[i][0];
+      let year = data2.at(i).YEAR;
+      let value = data2.at(i).PROFITPERCENTAGE;
 
       chartData.push({
         label: year,
-        profit_percentage,
-        tooltipContent: `<b>x: </b>${year}<br><b>y: </b>${profit_percentage}`
+        value,
+        tooltipContent: `<b>x: </b>${year}<br><b>y: </b>${value}`
       });
     }
     setData3(chartData)
@@ -48,15 +56,16 @@ function App() {
   //     <div className="App">
   //       <button onClick={regenerateData}>Change Data</button>
   //       <LineChart data={data} width={400} height={300} />
+
   //     </div>
 
   return (
     <div className="home">
       <div class="container">
         <div class="row align-items-center my-5">
-          <div class="col-lg-6">
-            <h1 class="font-weight-light">{!data ? "Loading..." : data}</h1>
-          </div>
+          <ul class="list-unstyled">
+            <LineChart data={data3} width={400} height={300} />
+          </ul>
           <div class="col-lg-6">
             <h1 class="font-weight-light">Profit Percentage</h1>
             <dl>
@@ -132,3 +141,5 @@ export default App;
 // }
 
 // export default App;
+
+// <LineChart data={data3} width={400} height={300} />

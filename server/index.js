@@ -5,10 +5,14 @@
 // install Express i terminal as dependency to use it: npm i express
 
 const path = require('path');
+const cors = require('cors');
 const express = require('express');
 const PORT = process.env.PORT || 3001;
 const app = express();
 const oracledb = require('oracledb');
+oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
+
+app.use(cors());
 
 let response; // variable I put in to test passing to client
 let response2;
@@ -102,7 +106,7 @@ async function run() {
         MINUS
         SELECT profitPercentage, releaseDate from outlier_data
         )
-        SELECT AVG(profitPercentage), EXTRACT(year FROM releaseDate) AS YEAR
+        SELECT AVG(profitPercentage) as profitPercentage, EXTRACT(year FROM releaseDate) AS YEAR
         FROM discarded_outliers
         GROUP BY EXTRACT(year FROM releaseDate)
         HAVING COUNT(profitPercentage) > 100
@@ -133,11 +137,13 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 // If React app makes GET request to /api route, respond using res within our JSON data
 // Test by visiting http://localhost:3001/api in browser
 app.get("/api", (req, res) => {
-  res.json({ response });
+  // res.json({ response });
+  res.send(response);
 });
 
 app.get("/profitpercentage/yearly", (req, res) => {
-  res.json({ response2 });
+  // res.json({ response2 });
+  res.send(response2);
 });
 
 // All other GET requests not handled before will return our React app
