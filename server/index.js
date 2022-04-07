@@ -5,12 +5,17 @@
 // install Express i terminal as dependency to use it: npm i express
 
 const path = require('path');
+const cors = require('cors');
 const express = require('express');
 const PORT = process.env.PORT || 3001;
 const app = express();
 const oracledb = require('oracledb');
+oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
+
+app.use(cors());
 
 let response; // variable I put in to test passing to client
+let response2;
 
 // oracledb connection code taken from Oracle
 // https://www.oracle.com/database/technologies/appdev/quickstartnodeonprem.html
@@ -27,39 +32,6 @@ async function run() {
 
     console.log("Successfully connected to Oracle Database");
 
-    // // Create a table
-
-    // await connection.execute(`begin
-    //                               execute immediate 'drop table todoitem';
-    //                               exception when others then if sqlcode <> -942 then raise; end if;
-    //                             end;`);
-
-    // await connection.execute(`create table todoitem (
-    //                               id number generated always as identity,
-    //                               description varchar2(4000),
-    //                               creation_ts timestamp with time zone default current_timestamp,
-    //                               done number(1,0),
-    //                               primary key (id))`);
-
-    // // Insert some data
-
-    // const sql = `insert into todoitem (description, done) values(:1, :2)`;
-
-    // const rows =
-    //   [["Task 1", 0],
-    //   ["Task 2", 0],
-    //   ["Task 3", 1],
-    //   ["Task 4", 0],
-    //   ["Task 5", 1]];
-
-    // let result = await connection.executeMany(sql, rows);
-
-    // console.log(result.rowsAffected, "Rows Inserted");
-
-    // connection.commit();
-
-    // Now query the rows back
-
     const result = await connection.execute(
       `select title from laurachang.movies`,
       [],
@@ -67,22 +39,81 @@ async function run() {
     console.log(result.rows);
     response = result.rows;
 
-    // result = await connection.execute(
-    //   `select description, done from todoitem`,
-    //   [],
-    //   { resultSet: true, outFormat: oracledb.OUT_FORMAT_OBJECT });
+    const result2 = await connection.execute(
+      // WITH profit_percentage(profitpercentage, releasedate)
+      //     AS (SELECT (revenue-budget)/revenue, releasedate
+      //     FROM movies
+      //     WHERE  budget <> 0 and revenue <> 0)
+      // SELECT AVG(profitpercentage), extract(year FROM releasedate) as year
+      //     FROM profit_percentage
+      //     GROUP BY EXTRACT(year FROM releasedate)
+      //     HAVING COUNT(profilePercentage) > 100
+      //     ORDER BY year ASC;
 
-    // const rs = result.resultSet;
-    // let row;
-
-    // while ((row = await rs.getRow())) {
-    //   if (row.DONE)
-    //     console.log(row.DESCRIPTION, "is done");
-    //   else
-    //     console.log(row.DESCRIPTION, "is NOT done");
-    // }
-
-    // await rs.close();
+      // Outlier code sourced from https://towardsdatascience.com/using-sql-to-detect-outliers-aff676bb2c1a
+      // Values outside 1.5 * IQR removed
+      `with ordered_profit_percentage AS (
+        SELECT
+            (revenue-budget)/revenue as profitPercentage,
+            releaseDate,
+            ROW_NUMBER() OVER (ORDER BY (revenue-budget)/revenue ASC) AS row_n
+        FROM movies
+        WHERE budget <> 0 AND revenue <> 0
+        ),
+        iqr AS (
+        SELECT
+            profitPercentage,
+          releaseDate,
+          (
+            SELECT profitPercentage AS quartile_break
+            FROM ordered_profit_percentage
+            WHERE row_n = FLOOR((SELECT COUNT(*)
+              FROM ordered_profit_percentage)*0.75)
+              ) AS q_three,
+          (
+            SELECT profitPercentage AS quartile_break
+            FROM ordered_profit_percentage
+            WHERE row_n = FLOOR((SELECT COUNT(*)
+              FROM ordered_profit_percentage)*0.25)
+              ) AS q_one,
+          1.5 * ((
+            SELECT profitPercentage AS quartile_break
+            FROM ordered_profit_percentage
+            WHERE row_n = FLOOR((SELECT COUNT(*)
+              FROM ordered_profit_percentage)*0.75)
+              ) - (
+              SELECT profitPercentage AS quartile_break
+              FROM ordered_profit_percentage
+              WHERE row_n = FLOOR((SELECT COUNT(*)
+                FROM ordered_profit_percentage)*0.25)
+              )) AS outlier_range
+          FROM ordered_profit_percentage
+        ),
+        outlier_data AS (
+        SELECT releaseDate, profitPercentage
+        FROM iqr
+        WHERE profitPercentage >= ((SELECT MAX(q_three)
+          FROM iqr) +
+          (SELECT MAX(outlier_range)
+            FROM iqr)) OR
+            profitPercentage <= ((SELECT MAX(q_one)
+          FROM iqr) -
+          (SELECT MAX(outlier_range)
+            FROM iqr))
+        ),
+        discarded_outliers AS (
+        SELECT profitPercentage, releaseDate FROM ordered_profit_percentage
+        MINUS
+        SELECT profitPercentage, releaseDate from outlier_data
+        )
+        SELECT AVG(profitPercentage)*100 as profitPercentage, EXTRACT(year FROM releaseDate) AS YEAR
+        FROM discarded_outliers
+        GROUP BY EXTRACT(year FROM releaseDate)
+        HAVING COUNT(profitPercentage) > 100
+        ORDER BY year ASC`,
+      []);
+    console.log(result2.rows)
+    response2 = result2.rows;
 
   } catch (err) {
     console.error(err);
@@ -106,7 +137,13 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 // If React app makes GET request to /api route, respond using res within our JSON data
 // Test by visiting http://localhost:3001/api in browser
 app.get("/api", (req, res) => {
-  res.json({ response });
+  // res.json({ response });
+  res.send(response);
+});
+
+app.get("/profitpercentage/yearly", (req, res) => {
+  // res.json({ response2 });
+  res.send(response2);
 });
 
 // All other GET requests not handled before will return our React app

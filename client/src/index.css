@@ -11,3 +11,48 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Styling referenced from GitHub linked from line chart tutorial
+https://betterprogramming.pub/react-d3-plotting-a-line-chart-with-tooltips-ed41a4c31f4f */
+
+#container {
+  width: fit-content;
+}
+
+svg {
+  background-color: aliceblue;
+}
+
+.overlay {
+  cursor: pointer;
+}
+
+.grid {
+  color: #cdebf9;
+}
+
+.x-axis, .y-axis {
+  color: #72c6ed;
+  stroke-width: 4;
+}
+
+.x-axis text, .y-axis text {
+  color: #72c6ed;
+  font-size: 12px;
+}
+
+.circle {
+  fill: #f6c3d0;
+}
+
+.tooltip {
+  position: absolute;
+  top: 100px;
+  left: 50px;
+  background-color: #cdebf9;
+  color: #45b3e7;
+  border: 1px solid #45b3e7;
+  border-radius: 5px;
+  width: fit-content;
+  padding: 10px;
+}
