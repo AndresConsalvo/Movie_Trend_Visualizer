@@ -106,7 +106,7 @@ async function run() {
         MINUS
         SELECT profitPercentage, releaseDate from outlier_data
         )
-        SELECT AVG(profitPercentage) as profitPercentage, EXTRACT(year FROM releaseDate) AS YEAR
+        SELECT AVG(profitPercentage)*100 as profitPercentage, EXTRACT(year FROM releaseDate) AS YEAR
         FROM discarded_outliers
         GROUP BY EXTRACT(year FROM releaseDate)
         HAVING COUNT(profitPercentage) > 100

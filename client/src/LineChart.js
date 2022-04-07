@@ -83,7 +83,7 @@ function LineChart(props) {
             .append('g')
             .attr('class', 'x-axis')
             .attr('transform', `translate(0,${height})`)
-            .call(d3.axisBottom().scale(xScale).tickSize(15));
+            .call(d3.axisBottom().scale(xScale).tickSize(15))
         svg
             .append('g')
             .attr('class', 'y-axis')
@@ -96,8 +96,27 @@ function LineChart(props) {
             .attr('stroke-width', 4)
             .attr('class', 'line')
             .attr('d', line);
-
-
+        svg // Title
+            .append('text')
+            .attr('x', width / 2)
+            .attr('y', -15)
+            .attr('text-anchor', 'middle')
+            .style('font-size', 20)
+            .text('[(Budget - Revenue) / Budget] of Movies by Year');
+        svg // x-Label
+            .append('text')
+            .attr('x', width / 2)
+            .attr('y', height + 45)
+            .attr('text-anchor', 'middle')
+            .style('font-size', 16)
+            .text('Year');
+        svg // y-Label
+            .append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'translate(-35,' + height / 2 + ')rotate(-90)')
+            .style('font-size', 16)
+            .text('Profit Percentage');
+            
         // Add circle marker for the point we are hovering over
         const focus = svg
             .append('g')

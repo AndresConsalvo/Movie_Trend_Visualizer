@@ -1,10 +1,10 @@
 import React from "react";
 import Axios from "axios";
 import LineChart from "../LineChart";
-import logo from "../logo.svg";
 import "../App.css";
 
 function App() {
+  const [isLoading, setLoading] = React.useState(true);
   const [data1, setData] = React.useState([]);
   const [data2, setData2] = React.useState([]);
   const [data3, setData3] = React.useState([]);
@@ -14,27 +14,14 @@ function App() {
       console.log(response.data)
       setData(response.data);
     });
-  }, []);
 
-  React.useEffect(() => {
     Axios.get('http://localhost:3001/profitpercentage/yearly').then((response) => {
-      console.log(response.data)
+      console.log(response.data);
       setData2(response.data);
+      generateData();
+      setLoading(false);
     });
-
-    generateData();
   }, []);
-
-
-  // React.useEffect(() => {
-  //   console.log(data1.at(0).TITLE);
-  //   console.log(data2);
-  // }, []);
-
-  // React.useEffect(() => {
-  //   generateData();
-  // }, []);
-
 
   function generateData() {
     const chartData = [];
@@ -48,24 +35,24 @@ function App() {
         tooltipContent: `<b>x: </b>${year}<br><b>y: </b>${value}`
       });
     }
-    setData3(chartData)
+    setData3(chartData);
   }
 
-  //     // pass the height, width, and data as props to <LineChart />
-  //     // data object contains label (X-Axis) and value (Y-Axis) as well as the tooltipContent we want to show hovering over the chart
-  //     <div className="App">
-  //       <button onClick={regenerateData}>Change Data</button>
-  //       <LineChart data={data} width={400} height={300} />
+  if (isLoading) {
+    console.log('Loading');
+    return <div className="App">Loading...</div>;
+  }
 
-  //     </div>
-
+  // pass the height, width, and data as props to <LineChart />
+  // data object contains label (X-Axis) and value (Y-Axis) as well as the tooltipContent we want to show hovering over the chart
+  console.log("render");
   return (
     <div className="home">
       <div class="container">
-        <div class="row align-items-center my-5">
-          <ul class="list-unstyled">
+        <div class="row align-items-start my-5">
+          <div class="col-lg-6">
             <LineChart data={data3} width={400} height={300} />
-          </ul>
+          </div>
           <div class="col-lg-6">
             <h1 class="font-weight-light">Profit Percentage</h1>
             <dl>
@@ -82,64 +69,14 @@ function App() {
                 </dd>
               </div>
               <dt>
-                Applications:
+                Applications
               </dt>
             </dl>
           </div>
         </div>
       </div>
     </div>
-
-    // {/* <div className="App">
-    // <header className="App-header">
-    //   <img src={logo} className="App-logo" alt="logo" />
-    //   <p>{!data ? "Loading..." : data}</p>
-    // </header>
-    // </div> */}
   );
 }
 
 export default App;
-
-
-// // Code sourced from Urvashi in Better Programming
-// // https://betterprogramming.pub/react-d3-plotting-a-line-chart-with-tooltips-ed41a4c31f4f
-
-// import React, { useState, useEffect } from 'react';
-// import LineChart from './LineChart';
-// import './App.css';
-
-// function App() {
-//   const [data, setData] = useState([]);
-
-//   useEffect(() => {
-//     regenerateData();
-//   }, []);
-
-//   function regenerateData() {
-//     const chartData = [];
-//     for (let i = 0; i < 20; i++) {
-//       const value = Math.floor(Math.random() * i + 3);
-//       chartData.push({
-//         label: i,
-//         value,
-//         tooltipContent: `<b>x: </b>${i}<br><b>y: </b>${value}`
-//       });
-//     }
-//     setData(chartData)
-//   }
-
-//   return (
-//     // generates random data and sets the component data state on first mount and then every time the Chace Data button is clicked.
-//     // pass the height, width, and data as props to <LineChart />
-//     // data object contains label (X-Axis) and value (Y-Axis) as well as the tooltipContent we want to show hovering over the chart
-//     <div className="App">
-//       <button onClick={regenerateData}>Change Data</button>
-//       <LineChart data={data} width={400} height={300} />
-//     </div>
-//   );
-// }
-
-// export default App;
-
-// <LineChart data={data3} width={400} height={300} />
