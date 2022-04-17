@@ -5,19 +5,13 @@ import "../App.css";
 
 function App() {
   const [isLoading, setLoading] = React.useState(true);
-  const [data1, setData] = React.useState([]);
-  const [data2, setData2] = React.useState([]);
-  const [data3, setData3] = React.useState([]);
+  const [query3Data, setQuery3Data] = React.useState([]);
+  const [query3GraphData, setQuery3GraphData] = React.useState([]);
 
   React.useEffect(() => {
-    Axios.get('http://localhost:3001/api').then((response) => {
-      console.log(response.data)
-      setData(response.data);
-    });
-
     Axios.get('http://localhost:3001/profitpercentage/yearly').then((response) => {
       console.log(response.data);
-      setData2(response.data);
+      setQuery3Data(response.data);
       generateData();
       setLoading(false);
     });
@@ -25,9 +19,9 @@ function App() {
 
   function generateData() {
     const chartData = [];
-    for (let i = 0; i < data2.length; i++) {
-      let year = data2.at(i).YEAR;
-      let value = data2.at(i).PROFITPERCENTAGE;
+    for (let i = 0; i < query3Data.length; i++) {
+      let year = query3Data.at(i).YEAR;
+      let value = query3Data.at(i).PROFITPERCENTAGE;
 
       chartData.push({
         label: year,
@@ -35,7 +29,7 @@ function App() {
         tooltipContent: `<b>x: </b>${year}<br><b>y: </b>${value}`
       });
     }
-    setData3(chartData);
+    setQuery3GraphData(chartData);
   }
 
   if (isLoading) {
@@ -51,12 +45,12 @@ function App() {
       <div class="container">
         <div class="row align-items-start my-5">
           <div class="col-lg-6">
-            <LineChart data={data3} width={400} height={300} />
+            <LineChart data={query3GraphData} width={400} height={300} />
           </div>
           <div class="col-lg-6">
             <h1 class="font-weight-light">Profit Percentage</h1>
             <dl>
-              <dt>Considerations:</dt>
+              <dt>Considerations;</dt>
               <div class="col-lg-auto">
                 <dd>- Budget and revenue information weren't provided for all movies, so those movies had to be filtered out.</dd>
                 <dd>
