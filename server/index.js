@@ -45,7 +45,8 @@ async function run() {
 
     const resultQ2b = await connection.execute(
       `SELECT AVG(revenue), EXTRACT(year FROM releasedate)as year
-        FROM movies WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID <> 'en'
+        FROM laurachang.movies 
+        WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID <> 'en'
         GROUP BY EXTRACT(year FROM releasedate)
         HAVING count(title) > 15
         ORDER BY year ASC`,
@@ -54,7 +55,8 @@ async function run() {
 
     const resultQ2bMonthly = await connection.execute(
       `SELECT AVG(revenue), EXTRACT(month FROM releasedate) AS month, EXTRACT(year FROM releasedate) AS year
-        FROM movies WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID <> 'en'
+        FROM laurachang.movies 
+        WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID <> 'en'
         GROUP BY EXTRACT(year FROM releasedate), EXTRACT(month FROM releasedate)
         HAVING EXTRACT(year FROM releasedate) >= 2000
         ORDER BY year ASC`,
@@ -64,7 +66,8 @@ async function run() {
     // Year > 2000 to match results from non english movies
     const resultQ2a = await connection.execute(
       `SELECT AVG(revenue), EXTRACT(year FROM releasedate)as year
-        FROM movies WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID = 'en'
+        FROM laurachang.movies 
+        WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID = 'en'
         GROUP BY EXTRACT (year FROM releasedate)
         HAVING EXTRACT (year FROM releasedate) >= 2000
         ORDER BY year ASC`,
@@ -73,7 +76,8 @@ async function run() {
 
     const resultQ2aMonthly = await connection.execute(
       `SELECT AVG(revenue), EXTRACT(month FROM releasedate) AS month, EXTRACT(year FROM releasedate)AS year
-        FROM movies WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID = 'en'
+        FROM laurachang.movies
+        WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID = 'en'
         GROUP BY EXTRACT (year FROM releasedate), EXTRACT(month FROM releasedate)
         HAVING EXTRACT (year FROM releasedate) >= 2000
         ORDER BY year ASC`,
@@ -98,7 +102,7 @@ async function run() {
             (revenue-budget)/revenue as profitPercentage,
             releaseDate,
             ROW_NUMBER() OVER (ORDER BY (revenue-budget)/revenue ASC) AS row_n
-        FROM movies
+        FROM laurachang.movies
         WHERE budget <> 0 AND revenue <> 0
         ),
         iqr AS (
@@ -161,7 +165,7 @@ async function run() {
             (revenue-budget)/revenue as profitPercentage,
             releaseDate,
             ROW_NUMBER() OVER (ORDER BY (revenue-budget)/revenue ASC) AS row_n
-        FROM movies
+        FROM laurachang.movies
         WHERE budget <> 0 AND revenue <> 0
         ),
         iqr AS (
@@ -220,7 +224,7 @@ async function run() {
 
     const resultQ4 = await connection.execute(
       `SELECT COUNT(*) AS count, genrename, AVG(movies.revenue) AS earnings, EXTRACT(YEAR FROM movies.releasedate) AS year
-        FROM movies, genres 
+        FROM laurachang.movies, laurachang.genres 
         WHERE movies.mID = genres.mID AND movies.revenue <> 0 AND movies.releasedate is not null
         GROUP BY EXTRACT(YEAR FROM movies.releasedate), genres.genrename
         HAVING COUNT(*) > 20
@@ -230,7 +234,7 @@ async function run() {
 
     const resultQ4Monthly = await connection.execute(
       `SELECT COUNT(*) AS count, genrename, AVG(movies.revenue) AS earnings, EXTRACT(MONTH FROM movies.releasedate) AS MONTH, EXTRACT(YEAR FROM movies.releasedate) AS year
-        FROM movies, genres 
+        FROM laurachang.movies, laurachang.genres 
         WHERE movies.mID = genres.mID AND movies.revenue <> 0 AND movies.releasedate is not null
         GROUP BY EXTRACT(YEAR FROM movies.releasedate), EXTRACT(MONTH FROM movies.releasedate), genres.genrename
         HAVING COUNT(*) > 5
@@ -241,14 +245,14 @@ async function run() {
     const resultQ5a = await connection.execute(
       `WITH femaleCastCt(femaleCt, year) AS
           (SELECT count(castID) AS femaleCastCt, EXTRACT (year FROM releaseDate) AS year
-          FROM movies, cast_member, member
+          FROM laurachang.movies, laurachang.cast_member, laurachang.member
           WHERE castID = memberID AND cast_member.mID = movies.mID AND status = 'Released' AND releasedate IS NOT NULL AND gender = 1
           GROUP BY EXTRACT (year FROM releaseDate)
           HAVING COUNT(DISTINCT movies.mid) > 30
           ORDER  BY year ASC),
       maleCastCt(maleCt, year) AS
           (SELECT count(castID) AS maleCastCt, EXTRACT (year FROM releaseDate) AS year
-          FROM movies, cast_member, member
+          FROM laurachang.movies, laurachang.cast_member, laurachang.member
           WHERE castID = memberID AND cast_member.mID = movies.mID AND status = 'Released' AND releasedate IS NOT NULL AND gender = 2
           GROUP BY EXTRACT (year FROM releaseDate)
           HAVING COUNT(DISTINCT movies.mid) > 30
@@ -262,14 +266,14 @@ async function run() {
     const resultQ5aMonthly = await connection.execute(
       `WITH femaleCastCt(femaleCt, month, year) AS
           (SELECT count(castID) AS femaleCastCt, EXTRACT(month FROM releaseDate) AS month, EXTRACT(year FROM releaseDate) AS year
-          FROM movies, cast_member, member
+          FROM laurachang.movies, laurachang.cast_member, laurachang.member
           WHERE castID = memberID AND cast_member.mID = movies.mID AND status = 'Released' AND releasedate IS NOT NULL AND gender = 1
           GROUP BY EXTRACT (year FROM releaseDate), EXTRACT(month FROM releaseDate)
           HAVING EXTRACT(year FROM releaseDate) >= 1926
           ORDER  BY year ASC),
       maleCastCt(maleCt, month, year) AS
           (SELECT count(castID) AS maleCastCt, EXTRACT(month FROM releaseDate) AS month, EXTRACT(year FROM releaseDate) AS year
-          FROM movies, cast_member, member
+          FROM laurachang.movies, laurachang.cast_member, laurachang.member
           WHERE castID = memberID AND cast_member.mID = movies.mID AND status = 'Released' AND releasedate IS NOT NULL AND gender = 2
           GROUP BY EXTRACT(year FROM releaseDate), EXTRACT(month FROM releaseDate)
           HAVING EXTRACT(year FROM releaseDate) >= 1926
@@ -283,14 +287,14 @@ async function run() {
     const resultQ5b = await connection.execute(
       `WITH femaleCastCt(femaleCt, year) AS
           (SELECT count(castID) AS femaleCastCt, EXTRACT (year FROM releaseDate) AS year
-          FROM movies, cast_member, member
+          FROM laurachang.movies, laurachang.cast_member, laurachang.member
           WHERE castID = memberID AND cast_member.mID = movies.mID AND status = 'Released' AND releasedate IS NOT NULL AND gender = 1
           GROUP BY EXTRACT (year FROM releaseDate)
           HAVING COUNT(DISTINCT movies.mid) > 30
           ORDER  BY year ASC),
       maleCastCt(maleCt, year) AS
           (SELECT count(castID) AS maleCastCt, EXTRACT (year FROM releaseDate) AS year
-          FROM movies, cast_member, member
+          FROM laurachang.movies, laurachang.cast_member, laurachang.member
           WHERE castID = memberID AND cast_member.mID = movies.mID AND status = 'Released' AND releasedate IS NOT NULL AND gender = 2
           GROUP BY EXTRACT (year FROM releaseDate)
           HAVING COUNT(DISTINCT movies.mid) > 30
@@ -304,14 +308,14 @@ async function run() {
       const resultQ5bMonthly = await connection.execute(
         `WITH femaleCastCt(femaleCt, month, year) AS
           (SELECT count(castID) AS femaleCastCt, EXTRACT(month FROM releaseDate) AS month, EXTRACT(year FROM releaseDate) AS year
-          FROM movies, cast_member, member
+          FROM laurachang.movies, laurachang.cast_member, laurachang.member
           WHERE castID = memberID AND cast_member.mID = movies.mID AND status = 'Released' AND releasedate IS NOT NULL AND gender = 1
           GROUP BY EXTRACT (year FROM releaseDate), EXTRACT(month FROM releaseDate)
           HAVING EXTRACT(year FROM releaseDate) >= 1926
           ORDER  BY year ASC),
         maleCastCt(maleCt, month, year) AS
           (SELECT count(castID) AS maleCastCt, EXTRACT(month FROM releaseDate) AS month, EXTRACT(year FROM releaseDate) AS year
-          FROM movies, cast_member, member
+          FROM laurachang.movies, laurachang.cast_member, laurachang.member
           WHERE castID = memberID AND cast_member.mID = movies.mID AND status = 'Released' AND releasedate IS NOT NULL AND gender = 2
           GROUP BY EXTRACT(year FROM releaseDate), EXTRACT(month FROM releaseDate)
           HAVING EXTRACT(year FROM releaseDate) >= 1926
@@ -366,11 +370,11 @@ app.get("/profitpercentage/monthly", (req, res) => {
   res.send(query3Monthly);
 });
 
-app.get("/genreearnings", (req, res) => {
+app.get("/genreearnings/yearly", (req, res) => {
   res.send(query4);
 })
 
-app.get("genreearnings/monthly", (req, res) => {
+app.get("/genreearnings/monthly", (req, res) => {
   res.send(query4Monthly);
 })
 
