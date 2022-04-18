@@ -14,12 +14,15 @@ oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
 app.use(cors());
 
+let query1;
 let query2a;
 let query2aMonthly;
 let query2b;
 let query2bMonthly;
 let query3;
 let query3Monthly;
+let query4;
+let query4Monthly;
 let query5a;
 let query5aMonthly;
 let query5b;
@@ -215,6 +218,26 @@ async function run() {
     []);
     query3Monthly = resultQ3Monthly.rows;
 
+    const resultQ4 = await connection.execute(
+      `SELECT COUNT(*) AS count, genrename, AVG(movies.revenue) AS earnings, EXTRACT(YEAR FROM movies.releasedate) AS year
+        FROM movies, genres 
+        WHERE movies.mID = genres.mID AND movies.revenue <> 0 AND movies.releasedate is not null
+        GROUP BY EXTRACT(YEAR FROM movies.releasedate), genres.genrename
+        HAVING COUNT(*) > 20
+        ORDER BY YEAR DESC`,
+    []);
+    query4 = resultQ4.rows;
+
+    const resultQ4Monthly = await connection.execute(
+      `SELECT COUNT(*) AS count, genrename, AVG(movies.revenue) AS earnings, EXTRACT(MONTH FROM movies.releasedate) AS MONTH, EXTRACT(YEAR FROM movies.releasedate) AS year
+        FROM movies, genres 
+        WHERE movies.mID = genres.mID AND movies.revenue <> 0 AND movies.releasedate is not null
+        GROUP BY EXTRACT(YEAR FROM movies.releasedate), EXTRACT(MONTH FROM movies.releasedate), genres.genrename
+        HAVING COUNT(*) > 5
+        ORDER BY YEAR DESC`,
+    []);
+    query4Monthly = resultQ4Monthly.rows;
+
     const resultQ5a = await connection.execute(
       `WITH femaleCastCt(femaleCt, year) AS
           (SELECT count(castID) AS femaleCastCt, EXTRACT (year FROM releaseDate) AS year
@@ -342,6 +365,14 @@ app.get("/profitpercentage/yearly", (req, res) => {
 app.get("/profitpercentage/monthly", (req, res) => {
   res.send(query3Monthly);
 });
+
+app.get("/genreearnings", (req, res) => {
+  res.send(query4);
+})
+
+app.get("genreearnings/monthly", (req, res) => {
+  res.send(query4Monthly);
+})
 
 app.get("/malerolepercentage/yearly", (req, res) => {
   res.send(query5a);
