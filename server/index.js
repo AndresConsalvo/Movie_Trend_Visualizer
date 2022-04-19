@@ -16,6 +16,7 @@ oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 app.use(cors());
 
 let query1;
+let query1Monthly;
 let query2a;
 let query2aMonthly;
 let query2b;
@@ -45,6 +46,35 @@ async function run() {
     });
 
     console.log("Successfully connected to Oracle Database");
+
+    const resultQ1 = await connection.execute(
+      `WITH yearlyMaxRange(maxBudget, maxRange, year) AS (
+        SELECT max(budget), max(budget) - min(budget), EXTRACT(year FROM releasedate) FROM movies
+        WHERE budget <> 0 and popularity <> 0 AND releasedate IS NOT NULL
+        GROUP BY EXTRACT(year FROM releasedate)
+        HAVING max(budget) <> min(budget))
+      SELECT AVG((budget / maxBudget * maxRange / popularity)) AS budgetOverPopularity, EXTRACT(year FROM releasedate) AS year
+          FROM movies, yearlyMaxRange
+          WHERE EXTRACT(year FROM releasedate) = yearlyMaxRange.year AND budget <> 0 AND popularity <> 0 AND releasedate IS NOT NULL
+          GROUP BY EXTRACT(year FROM releasedate)
+          ORDER BY year DESC`,
+    [])
+    query1 = resultQ1.rows;
+
+    const resultQ1Monthly = await connection.execute(
+      `WITH monthlyMaxRange(maxBudget, maxRange, month, year) AS (
+        SELECT max(budget), max(budget) - min(budget), EXTRACT(month FROM releaseDate), EXTRACT(year FROM releaseDate) 
+        FROM movies
+        WHERE budget <> 0 and popularity <> 0 AND releasedate IS NOT NULL
+        GROUP BY EXTRACT(year FROM releaseDate), EXTRACT(month FROM releaseDate)
+        HAVING max(budget) <> min(budget))
+      SELECT AVG((budget / maxBudget * maxRange / popularity)) AS budgetOverPopularity, EXTRACT(year FROM releasedate) AS year, EXTRACT(month FROM releaseDate) AS month
+          FROM movies, monthlyMaxRange
+          WHERE EXTRACT(year FROM releaseDate) = monthlyMaxRange.year AND EXTRACT(month FROM releaseDate) = monthlyMaxRange.month AND budget <> 0 AND popularity <> 0 AND releasedate IS NOT NULL
+          GROUP BY EXTRACT(year FROM releaseDate), EXTRACT(month FROM releaseDate)
+          ORDER BY year DESC, month DESC`,
+    [])
+    query1Monthly = resultQ1Monthly.rows;
 
     const resultQ2b = await connection.execute(
       `SELECT AVG(revenue), EXTRACT(year FROM releasedate)as year
@@ -106,7 +136,7 @@ async function run() {
             releaseDate,
             ROW_NUMBER() OVER (ORDER BY (revenue-budget)/revenue ASC) AS row_n
         FROM laurachang.movies
-        WHERE budget <> 0 AND revenue <> 0
+        WHERE budget <> 0 AND revenue <> 0 AND releaseDate IS NOT NULL
         ),
         iqr AS (
         SELECT
@@ -407,6 +437,14 @@ run();
 // Allows Node to access our build React project using the express.static function for static files
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
+app.get("/normalizedbudgetoverpopularity/yearly", (req, res) => {
+  res.send(query1);
+});
+
+app.get("/normalizedbudgetoverpopularity/monthly", (req, res) => {
+  res.send(query1Monthly);
+})
+
 app.get("/englishrevenueavg/yearly", (req, res) => {
   res.send(query2a);
 });
@@ -417,11 +455,11 @@ app.get("/englishrevenueavg/monthly", (req, res) => {
 
 app.get("/nonenglishrevenueavg/yearly", (req, res) => {
   res.send(query2b);
-})
+});
 
 app.get("/nonenglishrevenueavg/monthly", (req, res) => {
   res.send(query2bMonthly);
-})
+});
 
 app.get("/profitpercentage/yearly", (req, res) => {
   // res.json({ response2 });
@@ -434,11 +472,11 @@ app.get("/profitpercentage/monthly", (req, res) => {
 
 app.get("/genreearnings/yearly", (req, res) => {
   res.send(query4);
-})
+});
 
 app.get("/genreearnings/monthly", (req, res) => {
   res.send(query4Monthly);
-})
+});
 
 app.get("/malerolepercentage/yearly", (req, res) => {
   res.send(query5a);
@@ -458,11 +496,11 @@ app.get("/femalerolepercentage/monthly", (req, res) => {
 
 app.get("/productioncompanydominance/yearly", (req, res) => {
   res.send(query6);
-})
+});
 
 app.get("/productioncompanydominance/monthly", (req, res) => {
   res.send(query6Monthly);
-})
+});
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
