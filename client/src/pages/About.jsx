@@ -19,24 +19,27 @@ function About() {
   return (
     <div className="about">
       <div class="container">
-        <div class="row align-items-center my-5">
+        <div class="row align-items-start my-5">
           <div class="col-lg-6">
-            <h1 class="font-weight-light">About</h1>
+            <h1 class="font-weight-light">About this application</h1>
             <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
+              This movie trend visualizer seeks to manipulate stored movie data to model historical trends over time. 
+              Although the trends are all formed from information related to movies, analysis of these trends can extend to 
+              analysis of broader socioeconomic implications that are relevant today. In addition, information 
+              extrapolated from these trends such as determining when certain movie categories tend to make the most money
+              can lead itself to practical applications in industry.
             </p>
           </div>
           <div class="col-lg-6">
-            <h1 class="font-weight-light">Contact</h1>
+            <h1 class="font-weight-light">Data credits</h1>
             <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
+              Our movie dataset was sourced from <a href="https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset">Kaggle</a> in
+               the form of csv files. <br></br>
+              Rounak Banik, the author of the dataset on Kaggle, in turn collected his data from TMDB and GroupLens. Movie information 
+              was obtained from the <a href="https://www.themoviedb.org/documentation/api?language=en-US">TMDB Open API</a>, 
+              while movie ratings were sourced from the <a href="https://grouplens.org/datasets/movielens/latest/">Official GroupLens website</a>.
             </p>
+
           </div>
           <div class="col-lg-6">
             <input
