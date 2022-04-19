@@ -51,26 +51,38 @@ function Query_1() {
         <div class="container">
           <div class="row align-items-start my-5">
             <div class="col-lg-6">                        
-              <LineChart data={query3GraphData} width={400} height={300} />
+              {/* <LineChart data={query3GraphData} width={400} height={300} /> */}
+              <h3 style={{marginLeft: 100, marginBottom: 30}}>Popularity of Genres (In terms of revenue) vs. Time</h3>     
+              <div style={{display: "flex", flexDirection: "row"}}>
+                <p style={{marginTop: 150, transform: [{ rotate: '90deg' }]}}>Revenue of Genres</p>
+                <LineChart data={query3GraphData} width={400} height={300} />
+              </div>                 
+              <p style={{marginLeft: 350, marginTop: 20}}>Time</p> 
             </div>
             <div class="col-lg-6">
               <h1 class="font-weight-light">EARNINGS PER GENRE</h1>
               <dl>
-                <dt>Considerations:</dt>
+                <dt><br /><br />Considerations:</dt>
                 <div class="col-lg-auto">
-                  <dd>- Budget and revenue information weren't provided for all movies, so those movies had to be filtered out.</dd>
-                  <dd>
+                  <dd>- Movies without revenue information are excluded, as we have no way to map the earnings for the Y axis.<br /><br /><br /></dd>
+                  {/* <dd>
                     - Our movie data source wasn't perfect, as some movies had millions of dollars in budget but less than one hundred in revenue.
                     Consequently, outliers (identified by being located outside of 1.5 times the IQR) were removed.
                   </dd>
                   <dd>
                     - Prior to 1998, many of the years only had a few movies that provided movie financial information.
                     Thus, these years were not considered because basing a year's performance on three movies would not yield reliable results.
-                  </dd>
+                  </dd> */}
                 </div>
                 <dt>
                   Applications
                 </dt>
+                <dd>
+                  - From an economic standpoint, it can be useful to check how the success of genres changes seasonally as well as over the years. 
+                </dd>
+                <dd>
+                  - Seeing when a genre tends to earn more can help with timing movie releases.
+                </dd>
               </dl>
             </div>
           </div>

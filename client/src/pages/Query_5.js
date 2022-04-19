@@ -62,21 +62,22 @@ function Query_1() {
             <div class="col-lg-6">
               <h1 class="font-weight-light">PERCENTAGE OF FEMALE CAST</h1>
               <dl>
-                <dt>Considerations</dt>
+              <dt>Considerations</dt>
                 <div class="col-lg-auto">
-                  <dd>- Budget and revenue information weren't provided for all movies, so those movies had to be filtered out.</dd>
+                  <dd>- Only years with greater than 30 movies released are included. Years with a very small number of released movies are excluded to avoid the case of one or two movies dominating a data point and thus affecting a data point in unpredictable ways. </dd>
                   <dd>
-                    - Our movie data source wasn't perfect, as some movies had millions of dollars in budget but less than one hundred in revenue.
-                    Consequently, outliers (identified by being located outside of 1.5 times the IQR) were removed.
+                    - To align the scales of the months and years X-axis (time), collection of movie information does not start until 1926, which is the start of the yearly information. 
                   </dd>
                   <dd>
-                    - Prior to 1998, many of the years only had a few movies that provided movie financial information.
-                    Thus, these years were not considered because basing a year's performance on three movies would not yield reliable results.
+                    -	There weren’t enough movies with a release date that hadn’t yet been released to provide reliable data, so those too were excluded.
                   </dd>
                 </div>
                 <dt>
                   Applications
                 </dt>
+                <dd>
+                Value for this graph is raised from a societal view. The trend of the percentage of female cast members over time can serve as a metric of changes in inclusivity and be further compared to diversity metrics outside of the movie industry.
+                </dd>
               </dl>
             </div>
           </div>

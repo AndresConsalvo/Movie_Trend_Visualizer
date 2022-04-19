@@ -28,8 +28,8 @@ ReactDOM.render(
       <Route exact path="/query_4" component={Query_4} />
       <Route exact path="/query_5" component={Query_5} />
       <Route exact path="/query_6" component={Query_6} />
-      <Route exact path="/query_7" component={Query_7} />
-      {/* <Route exact path="/query_8" component={Query_8} /> */}
+      {/* <Route exact path="/query_7" component={Query_7} /> */}
+      <Route exact path="/query_8" component={Query_8} />
     </Switch>
     <Footer />
   </Router>,

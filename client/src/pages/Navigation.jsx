@@ -28,8 +28,8 @@ function Navigation() {
               <Nav.Link href = "/query_4">Average amount of Male Over Time</Nav.Link>
               <Nav.Link href = "/query_5">Average amount of Female Over Time</Nav.Link>
               <Nav.Link href = "/query_6">Production Company Dominance Over Time</Nav.Link>
-              <Nav.Link href = "/query_7">Tracking Popularity of Genres Over Time</Nav.Link>
-              {/* <Nav.Link href = "/query_8">Genre Earnings Over Time</Nav.Link> */}
+              {/* <Nav.Link href = "/query_7">Tracking Popularity of Genres Over Time</Nav.Link> */}
+              <Nav.Link href = "/query_8">Genre Earnings Over Time</Nav.Link>
             </ Nav>
               {/* <Nav.Link href = {App}>Home</Nav.Link>
               <Nav.Link href = {About}>About</Nav.Link> */}

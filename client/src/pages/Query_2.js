@@ -204,21 +204,23 @@ function Query_1() {
             <div class="col-lg-6">
               <h1 class="font-weight-light">AVERAGE REVENUE OF FILMS (NON-ENGLISH)</h1>
               <dl>
-                <dt>Considerations:</dt>
+              <dt>Considerations:</dt>
                 <div class="col-lg-auto">
-                  <dd>- Budget and revenue information weren't provided for all movies, so those movies had to be filtered out.</dd>
+                  <dd>-	Required to have more than 15 English movies released in a year to be included to avoid very small datasets skewing data. </dd>
                   <dd>
-                    - Our movie data source wasn't perfect, as some movies had millions of dollars in budget but less than one hundred in revenue.
-                    Consequently, outliers (identified by being located outside of 1.5 times the IQR) were removed.
+                      -	When choosing the monthly granularity, we consider movies starting from the beginning of the yearly graph (year 2000) for more fluid integration/connectiveness. Original intention was to have specific languages outside of English shown, but there weren’t enough movies for a specific language to model.
                   </dd>
-                  <dd>
+                  {/* <dd>
                     - Prior to 1998, many of the years only had a few movies that provided movie financial information.
                     Thus, these years were not considered because basing a year's performance on three movies would not yield reliable results.
-                  </dd>
+                  </dd> */}
                 </div>
                 <dt>
                   Applications
                 </dt>
+                <dd>
+                - A diversity metric to see how society responds to growing industries outside of the familiar English domain, how welcoming the society has been to different cultures and their depictions of the world.
+                </dd>
               </dl>
             </div>
           </div>
