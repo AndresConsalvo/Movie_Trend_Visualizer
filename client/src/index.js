@@ -9,7 +9,7 @@ import {
   About,
 } from "./pages";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Query_1 from "./pages/Query_1";
+// import Query_1 from "./pages/Query_1";
 import Query_2 from "./pages/Query_2";
 import Query_4 from "./pages/Query_4";
 import Query_5 from "./pages/Query_5";
@@ -23,13 +23,13 @@ ReactDOM.render(
     <Switch>
       <Route exact path="/" component={Home} />
       <Route exact path="/about" component={About} />            
-      <Route exact path="/query_1" component={Query_1} />
+      {/* <Route exact path="/query_1" component={Query_1} /> */}
       <Route exact path="/query_2" component={Query_2} />
       <Route exact path="/query_4" component={Query_4} />
       <Route exact path="/query_5" component={Query_5} />
       <Route exact path="/query_6" component={Query_6} />
-      <Route exact path="/query_7" component={Query_7} />
-      {/* <Route exact path="/query_8" component={Query_8} /> */}
+      {/* <Route exact path="/query_7" component={Query_7} /> */}
+      <Route exact path="/query_8" component={Query_8} />
     </Switch>
     <Footer />
   </Router>,

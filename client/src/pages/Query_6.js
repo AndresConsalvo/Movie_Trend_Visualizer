@@ -186,19 +186,23 @@ function Query_1() {
               <dl>
                 <dt>Considerations</dt>
                 <div class="col-lg-auto">
-                  <dd>- Budget and revenue information weren't provided for all movies, so those movies had to be filtered out.</dd>
-                  <dd>
+                  <dd>- To avoid overcrowding of the graph and the presence of little-known production companies that have only produced a few movies, only the production companies with the top 5 most ratings for each year/month are considered.</dd>
+                  {/* <dd>
                     - Our movie data source wasn't perfect, as some movies had millions of dollars in budget but less than one hundred in revenue.
                     Consequently, outliers (identified by being located outside of 1.5 times the IQR) were removed.
                   </dd>
                   <dd>
                     - Prior to 1998, many of the years only had a few movies that provided movie financial information.
                     Thus, these years were not considered because basing a year's performance on three movies would not yield reliable results.
-                  </dd>
+                  </dd> */}
                 </div>
                 <dt>
                   Applications
                 </dt>
+                <dd>
+                - Analyze the relative dominance of the top 5 production companies in terms of user engagement. <br /><br/>- The metric of user engagement for this graph is the amount of user ratings written for movies produced by the company. <br/><br/>- Interest may arise from an analysis of a production company’s reach and success, or be extended to economic standpoint to see how user engagement correlates to revenue
+
+                </dd>
               </dl>
             </div>
           </div>

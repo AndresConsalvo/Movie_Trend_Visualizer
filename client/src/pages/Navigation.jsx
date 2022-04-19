@@ -22,14 +22,14 @@ function Navigation() {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-2">
-              <Nav.Link href = "/query_1">Success rate of Movie vs. Language(English)</Nav.Link>              
-              <Nav.Link href = "/query_2">Success rate of Movie vs. Language(Non-English)</Nav.Link>
+              {/* <Nav.Link href = "/query_1">Success rate of Movie vs. Language(English)</Nav.Link>               */}
+              <Nav.Link href = "/query_2">Success rate of Movies Based on Original Language</Nav.Link>
               <Nav.Link href = "/">Profit Percentage vs. Time</Nav.Link>
               <Nav.Link href = "/query_4">Average amount of Male Over Time</Nav.Link>
               <Nav.Link href = "/query_5">Average amount of Female Over Time</Nav.Link>
               <Nav.Link href = "/query_6">Production Company Dominance Over Time</Nav.Link>
-              <Nav.Link href = "/query_7">Tracking Popularity of Genres Over Time</Nav.Link>
-              {/* <Nav.Link href = "/query_8">Genre Earnings Over Time</Nav.Link> */}
+              {/* <Nav.Link href = "/query_7">Tracking Popularity of Genres Over Time</Nav.Link> */}
+              <Nav.Link href = "/query_8">Genre Earnings Over Time</Nav.Link>
             </ Nav>
               {/* <Nav.Link href = {App}>Home</Nav.Link>
               <Nav.Link href = {About}>About</Nav.Link> */}
