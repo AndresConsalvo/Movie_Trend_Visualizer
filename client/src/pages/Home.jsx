@@ -6,16 +6,26 @@ import "../App.css";
 function App() {
   const [isLoading, setLoading] = React.useState(true);
   const [query3Data, setQuery3Data] = React.useState([]);
+  const [query4Data, setQuery4Data] = React.useState([]);
   const [query3GraphData, setQuery3GraphData] = React.useState([]);
+  const [query4GraphData, setQuery4GraphData] = React.useState([]);
 
   React.useEffect(() => {
     Axios.get('http://localhost:3001/profitpercentage/yearly').then((response) => {
       console.log(response.data);
       setQuery3Data(response.data);
-      generateData();
-      setLoading(false);
+    });
+    Axios.get('http://localhost:3001/genreearnings/yearly').then((response) => {
+      console.log(response.data);
+      setQuery4Data(response.data);
     });
   }, []);
+
+  React.useEffect(() => {
+    generateData();
+    generateQuery4ChartData();
+    setLoading(false);
+  }, [query3Data, query4Data]);
 
   function generateData() {
     const chartData = [];
@@ -30,6 +40,21 @@ function App() {
       });
     }
     setQuery3GraphData(chartData);
+  }
+
+  function generateQuery4ChartData() {
+    const chartData = [];
+    for (let i = 0; i < query4Data.length; i++) {
+      let year = query4Data.at(i).YEAR;
+      let value = query4Data.at(i).EARNINGS;
+
+      chartData.push({
+        label: year,
+        value,
+        tooltipContent: `<b>x: </b>${year}<br><b>y: </b>${value}`
+      });
+    }
+    setQuery4GraphData(chartData);
   }
 
   if (isLoading) {

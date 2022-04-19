@@ -102,7 +102,7 @@ function LineChart(props) {
             .attr('y', -15)
             .attr('text-anchor', 'middle')
             .style('font-size', 20)
-            .text('[(Budget - Revenue) / Budget] of Movies by Year');
+            .text('[(Revenue - Budget) / Revenue] of Movies by Year');
         svg // x-Label
             .append('text')
             .attr('x', width / 2)
