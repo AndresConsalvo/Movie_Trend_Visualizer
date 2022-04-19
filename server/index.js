@@ -41,8 +41,8 @@ async function run() {
 
   try {
     connection = await oracledb.getConnection({
-      user: "om.goyal",
-      password: "GLTddhw15gLMkUrxlMEL9qUA",
+      user: "laurachang",
+      password: "hC4gXYb7ky9SnOdcOsmaTQFr",
       connectionString: "//oracle.cise.ufl.edu/orcl"
     });
 
@@ -78,7 +78,7 @@ async function run() {
     query1Monthly = resultQ1Monthly.rows;
 
     const resultQ2b = await connection.execute(
-      `SELECT AVG(revenue), EXTRACT(year FROM releasedate)as year
+      `SELECT AVG(revenue) AS AVGREVENUE, EXTRACT(year FROM releasedate)as year
         FROM laurachang.movies 
         WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID <> 'en'
         GROUP BY EXTRACT(year FROM releasedate)
@@ -88,7 +88,7 @@ async function run() {
     query2b = resultQ2b.rows;
 
     const resultQ2bMonthly = await connection.execute(
-      `SELECT AVG(revenue), EXTRACT(month FROM releasedate) AS month, EXTRACT(year FROM releasedate) AS year
+      `SELECT AVG(revenue) AS AVGREVENUE, EXTRACT(month FROM releasedate) AS month, EXTRACT(year FROM releasedate) AS year
         FROM laurachang.movies 
         WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID <> 'en'
         GROUP BY EXTRACT(year FROM releasedate), EXTRACT(month FROM releasedate)
@@ -99,7 +99,7 @@ async function run() {
     
     // Year > 2000 to match results from non english movies
     const resultQ2a = await connection.execute(
-      `SELECT AVG(revenue), EXTRACT(year FROM releasedate)as year
+      `SELECT AVG(revenue) AS AVGREVENUE, EXTRACT(year FROM releasedate)as year
         FROM laurachang.movies 
         WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID = 'en'
         GROUP BY EXTRACT (year FROM releasedate)
@@ -109,7 +109,7 @@ async function run() {
     query2a = resultQ2a.rows;
 
     const resultQ2aMonthly = await connection.execute(
-      `SELECT AVG(revenue), EXTRACT(month FROM releasedate) AS month, EXTRACT(year FROM releasedate)AS year
+      `SELECT AVG(revenue) AS AVGREVENUE, EXTRACT(month FROM releasedate) AS month, EXTRACT(year FROM releasedate)AS year
         FROM laurachang.movies
         WHERE revenue > 0 AND EXTRACT(year FROM releasedate) IS NOT NULL AND ogLangID = 'en'
         GROUP BY EXTRACT (year FROM releasedate), EXTRACT(month FROM releasedate)
