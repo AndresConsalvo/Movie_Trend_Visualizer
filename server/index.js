@@ -460,6 +460,10 @@ app.get("/productioncompanydominance/yearly", (req, res) => {
   res.send(query6);
 })
 
+app.get("/productioncompanydominance/monthly", (req, res) => {
+  res.send(query6Monthly);
+})
+
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
