@@ -14,8 +14,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chart.js": "^3.7.1",
     "cors": "^2.8.5",
     "express": "^4.17.3",
-    "oracledb": "^5.3.0"
+    "oracledb": "^5.3.0",
+    "react-chartjs-2": "^4.1.0",
+    "react-router-dom": "^5.2.0"
   }
 }

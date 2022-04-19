@@ -30,7 +30,7 @@ function LineChart(props) {
         // Add logic to draw the chart here
 
         // First define some constants
-        const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+        const margin = { top: 50, right: 50, bottom: 50, left: 100 };
         const yMinValue = d3.min(data, d => d.value);
         const yMaxValue = d3.max(data, d => d.value);
         const xMinValue = d3.min(data, d => d.label);
@@ -96,26 +96,6 @@ function LineChart(props) {
             .attr('stroke-width', 4)
             .attr('class', 'line')
             .attr('d', line);
-        svg // Title
-            .append('text')
-            .attr('x', width / 2)
-            .attr('y', -15)
-            .attr('text-anchor', 'middle')
-            .style('font-size', 20)
-            .text('[(Budget - Revenue) / Budget] of Movies by Year');
-        svg // x-Label
-            .append('text')
-            .attr('x', width / 2)
-            .attr('y', height + 45)
-            .attr('text-anchor', 'middle')
-            .style('font-size', 16)
-            .text('Year');
-        svg // y-Label
-            .append('text')
-            .attr('text-anchor', 'middle')
-            .attr('transform', 'translate(-35,' + height / 2 + ')rotate(-90)')
-            .style('font-size', 16)
-            .text('Profit Percentage');
             
         // Add circle marker for the point we are hovering over
         const focus = svg
