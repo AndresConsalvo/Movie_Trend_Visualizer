@@ -31,6 +31,7 @@ let query5b;
 let query5bMonthly;
 let query6;
 let query6Monthly;
+let tupleCt;
 
 // oracledb connection code taken from Oracle
 // https://www.oracle.com/database/technologies/appdev/quickstartnodeonprem.html
@@ -418,6 +419,18 @@ async function run() {
       []);
       query6Monthly = resultQ6Monthly.rows;
 
+      const rowCt = await connection.execute(
+        `WITH tableCt(numRows) AS (
+          SELECT COUNT(*) FROM movies UNION
+          SELECT COUNT(*) FROM member UNION
+          SELECT COUNT(*) FROM cast_member UNION
+          SELECT COUNT(*) FROM company_produces UNION
+          SELECT COUNT(*) FROM genres UNION
+          SELECT COUNT(*) FROM rates)
+         SELECT * FROM tableCt UNION SELECT SUM(numRows) FROM tableCt`,
+      []);
+      tupleCt = rowCt.rows;
+
   } catch (err) {
     console.error(err);
   } finally {
@@ -500,6 +513,11 @@ app.get("/productioncompanydominance/yearly", (req, res) => {
 
 app.get("/productioncompanydominance/monthly", (req, res) => {
   res.send(query6Monthly);
+});
+
+// Row values are movieCt, memberCt, castMemberCt, companyProducesCt, genresCt, ratesCt, and totalCt (sum)
+app.get("/tuplecount", (req, res) => {
+  res.send(tupleCt);
 });
 
 // All other GET requests not handled before will return our React app
