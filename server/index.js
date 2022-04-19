@@ -10,6 +10,7 @@ const express = require('express');
 const PORT = process.env.PORT || 3001;
 const app = express();
 const oracledb = require('oracledb');
+const { resolveSoa } = require('dns');
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
 app.use(cors());
@@ -27,6 +28,8 @@ let query5a;
 let query5aMonthly;
 let query5b;
 let query5bMonthly;
+let query6;
+let query6Monthly;
 
 // oracledb connection code taken from Oracle
 // https://www.oracle.com/database/technologies/appdev/quickstartnodeonprem.html
@@ -326,6 +329,65 @@ async function run() {
       []);
       query5bMonthly = resultQ5bMonthly.rows;
 
+      const resultQ6 = await connection.execute(
+        `WITH ratings(year, mID) AS (
+          SELECT TRUNC((timestamp / 31556926) + 1970) AS YEAR, mID
+          FROM laurachang.rates),
+        pcRatingsCt(pcName, year, ratingsCt) AS (
+            SELECT pcName, year, count(*) AS ratingsCt
+            FROM company_produces, ratings
+            WHERE company_produces.mID = ratings.mID
+            GROUP BY pcName, year
+            ORDER BY year DESC, ratingsCt DESC),
+        rws AS (
+            SELECT o.*, row_number () over (
+                partition by  year
+                order by ratingsCt desc
+                ) rn
+          FROM pcRatingsCt o),
+        top5PC AS (
+            SELECT pcName, year, ratingsCt from rws
+            WHERE rn <= 5
+            ORDER BY year desc, ratingsCt desc),
+        yearlyRatingsSum(year, sum) AS (
+            SELECT year, sum(ratingsCt)
+            FROM top5PC
+            GROUP BY year)
+        SELECT pcName, top5PC.year, (ratingsCt/sum) * 100 AS ratingPercentage
+            FROM top5PC, yearlyRatingsSum
+            WHERE top5PC.year = yearlyRatingsSum.year`,
+      []);
+      query6 = resultQ6.rows;
+
+      const resultQ6Monthly = await connection.execute(
+        `WITH ratings(month, year, mID) AS (
+          SELECT TRUNC(MOD(timestamp, 31556926) / 2629743) + 1 AS month, TRUNC((timestamp / 31556926) + 1970) AS YEAR, mID
+          FROM laurachang.rates),
+        pcRatingsCt(pcName, month, year, ratingsCt) AS (
+            SELECT pcName, month, year, count(*) AS ratingsCt
+            FROM laurachang.company_produces, ratings
+            WHERE company_produces.mID = ratings.mID
+            GROUP BY pcName, year, month),
+        rws AS (
+            SELECT o.*, row_number () over (
+                partition by  year, month
+                order by ratingsCt desc
+                ) rn
+          FROM pcRatingsCt o),
+        top5PC AS (
+            SELECT pcName, year, month, ratingsCt from rws
+            WHERE rn <= 5),  
+        yearlyRatingsSum(year, month, sum) AS (
+            SELECT year, month, sum(ratingsCt)
+            FROM top5PC
+            GROUP BY top5PC.year, top5PC.month)
+        SELECT pcName, top5PC.year AS year, top5PC.month AS month, (ratingsCt/sum) * 100 AS ratingPercentage
+            FROM top5PC, yearlyRatingsSum
+            WHERE top5PC.year = yearlyRatingsSum.year AND top5PC.month = yearlyRatingsSum.month
+            ORDER BY year DESC, month DESC`,
+      []);
+      query6Monthly = resultQ6Monthly.rows;
+
   } catch (err) {
     console.error(err);
   } finally {
@@ -393,6 +455,10 @@ app.get("/femalerolepercentage/yearly", (req, res) => {
 app.get("/femalerolepercentage/monthly", (req, res) => {
   res.send(query5bMonthly);
 });
+
+app.get("/productioncompanydominance/yearly", (req, res) => {
+  res.send(query6);
+})
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
