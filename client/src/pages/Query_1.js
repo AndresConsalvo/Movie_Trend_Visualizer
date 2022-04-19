@@ -2,33 +2,31 @@ import React from "react";
 import Axios from "axios";
 import LineChart from "../LineChart";
 import "../App.css";
-import About from './About.jsx'
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-function App() {
+function Query_1() {
   const [isLoading, setLoading] = React.useState(true);
   const [query3Data, setQuery3Data] = React.useState([]);
   const [query3GraphData, setQuery3GraphData] = React.useState([]);
 
   React.useEffect(() => {
-    Axios.get('http://localhost:3001/profitpercentage/yearly').then((response) => {
+    Axios.get('http://localhost:3001/englishrevenueavg/yearly').then((response) => {
       console.log(response.data);
-      setQuery3Data(response.data);
+      setQuery3Data(response.data);      
     });
   }, []);
 
   React.useEffect(() => {
     generateData();
     setLoading(false);
-  }, [query3Data,]); 
-
+  }, [query3Data,]);  
 
   function generateData() {
     const chartData = [];
     for (let i = 0; i < query3Data.length; i++) {
       let year = query3Data.at(i).YEAR;
-      let value = query3Data.at(i).PROFITPERCENTAGE;
+      let value = query3Data.at(i)["AVG(REVENUE)"];
 
       chartData.push({
         label: year,
@@ -41,7 +39,7 @@ function App() {
 
   if (isLoading) {
     console.log('Loading');
-    return <div className="App">Loading...</div>;
+    return <div className="Query_1">Loading...</div>;
   }
 
   // pass the height, width, and data as props to <LineChart />
@@ -52,19 +50,18 @@ function App() {
       <div className="home">        
         <div class="container">
           <div class="row align-items-start my-5">
-            <div class="col-lg-6">                        
-              {/* <LineChart data={query3GraphData} width={400} height={300} /> */}
-              <h3 style={{marginLeft: 100, marginBottom: 30}}>Profit Percentage of Movies vs. Time</h3>     
+            <div class="col-lg-6">       
+              <h3 style={{marginLeft: 100, marginBottom: 30}}>Average Revenue(English) vs. Time</h3>     
               <div style={{display: "flex", flexDirection: "row"}}>
-                <p style={{marginTop: 150, transform: [{ rotate: '90deg' }]}}>Profit Percentage</p>
+                <p style={{marginTop: 150, transform: [{ rotate: '90deg' }]}}>Average Revenue<br />(English)</p>
                 <LineChart data={query3GraphData} width={400} height={300} />
               </div>                 
-              <p style={{marginLeft: 350, marginTop: 20}}>Time</p> 
+              <p style={{marginLeft: 350, marginTop: 20}}>Time</p>     
             </div>
             <div class="col-lg-6">
-              <h1 class="font-weight-light">Profit Percentage</h1>
+              <h1 class="font-weight-light">AVERAGE REVENUE OF FILMS (ENGLISH)</h1>
               <dl>
-                <dt>Considerations</dt>
+                <dt>Considerations:</dt>
                 <div class="col-lg-auto">
                   <dd>- Budget and revenue information weren't provided for all movies, so those movies had to be filtered out.</dd>
                   <dd>
@@ -88,4 +85,4 @@ function App() {
   );
 }
 
-export default App;
+export default Query_1;

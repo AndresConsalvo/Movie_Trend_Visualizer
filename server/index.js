@@ -41,8 +41,8 @@ async function run() {
 
   try {
     connection = await oracledb.getConnection({
-      user: "laurachang",
-      password: "hC4gXYb7ky9SnOdcOsmaTQFr",
+      user: "om.goyal",
+      password: "GLTddhw15gLMkUrxlMEL9qUA",
       connectionString: "//oracle.cise.ufl.edu/orcl"
     });
 
@@ -54,7 +54,7 @@ async function run() {
         WHERE budget <> 0 and popularity <> 0 AND releasedate IS NOT NULL
         GROUP BY EXTRACT(year FROM releasedate)
         HAVING max(budget) <> min(budget))
-      SELECT AVG((budget / maxBudget * maxRange / popularity)) AS budgetOverPopularity, EXTRACT(year FROM releasedate) AS year
+      SELECT AVG((budget / maxBudget * 10000 / popularity)) AS budgetOverPopularity, EXTRACT(year FROM releasedate) AS year
           FROM movies, yearlyMaxRange
           WHERE EXTRACT(year FROM releasedate) = yearlyMaxRange.year AND budget <> 0 AND popularity <> 0 AND releasedate IS NOT NULL
           GROUP BY EXTRACT(year FROM releasedate)
